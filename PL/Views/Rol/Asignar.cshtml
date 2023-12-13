@@ -1,0 +1,18 @@
+﻿@model ML.UserIdentity
+@{
+}
+<h1>@ViewBag.Name</h1>
+
+@using (Html.BeginForm("Asignar", "Rol", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @* @Html.HiddenFor(model => model.Rol.Name) *@
+    @*   @Html.HiddenFor(model => model.Rol.RoleId) *@
+
+    @Html.DropDownListFor(model => model.IdUsuario, new SelectList(Model.IdentityUsers, "IdUsuario", "UserName"), "Selecciona un Usuario", new { @class = "form-control" })
+
+    @Html.DropDownListFor(model => model.Rol.RoleId, new SelectList(Model.Rol.Roles, "RoleId", "Name"), "Selecciona un Rol", new { @class = "form-control" })
+
+
+
+    <button type="submit">Asignar</button>
+}

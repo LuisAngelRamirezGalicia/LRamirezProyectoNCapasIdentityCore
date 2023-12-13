@@ -1,0 +1,64 @@
+﻿@model ML.Producto
+
+
+<div class="text-center m-2">
+    <h1>Productos</h1>
+    <hr />
+    <a class="btn btn-success" href="@Url.Action("Form", "Producto")"> Agregar producto </a>
+</div>
+@if (Model.Productos != null && Model.Productos.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table" id="tablaUsuarios">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">Editar</th>
+                    <th scope="col" class="text-center">Precio Unitario</th>
+                    <th scope="col" class="text-center">Stock</th>
+
+                    <th scope="col" class="text-center">IdProoveedor</th>
+                    <th scope="col" class="text-center">IdDepartamento</th>
+                    <th scope="col" class="text-center">Descripcion</th>
+
+                    <th scope="col" class="text-center">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                @foreach (ML.Producto producto in Model.Productos)
+                {
+
+                    <tr class="align-middle">
+                        <td class="text-center">
+                            <a class="btn" href="@Url.Action("Form", "Producto", new{idProducto = producto.IdProducto})">
+                                <i class="fa-solid fa-pen-to-square fa-lg" style="font-size: 1.7rem; color: #000000;">Editar</i>
+                            </a>
+                        </td>
+                        <td class="text-center">@producto.Nombre </td>
+                        <td class="text-center">@producto.PrecioUnitario</td>
+                          <td class="text-center">@producto.Stock</td>
+                        <td class="text-center">@producto.Proveedor.IdProveedor</td>
+
+                        <td class="text-center">@producto.Departamento.IdDepartamento</td>
+
+                        <td class="text-center">@producto.Descripcion</td>
+                        @if (producto.Foto != null)
+                        {
+                            <td><img id="imgUsuario" src="data:image/jpeg;base64,@Convert.ToBase64String(producto.Foto)" width="100" height="100" /></td>
+                        }
+                        else
+                        {
+                            <td><img src="~/Image/DefaultImage.jpg" id="imgUsuario" width="100" height="100" /></td>
+                        }
+                        <td class="text-center">
+                            <a class="btn" href="@Url.Action("Delete", "Producto", new{idProducto = producto.IdProducto})">
+                                <i class="fa-solid fa-trash fa-xl" style="font-size: 1.7rem; color: #b70000;">Borrar</i>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}

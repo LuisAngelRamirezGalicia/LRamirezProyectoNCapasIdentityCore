@@ -1,0 +1,68 @@
+﻿﻿@using Microsoft.AspNetCore.Identity
+
+@model IEnumerable<IdentityRole>
+@{
+    // ViewData["Title"] = "GetAll";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    Terminar el delete
+*@
+<div class="container">
+    <div class=row>
+        <div class="text-center">
+            <h2>Roles</h2>
+
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <h2>Detalle</h2>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Seleccione una materia para editarlo o + para agregar...</h5>
+            <hr />
+        </div>
+    </div>
+
+    <div style="float:right;">
+        @Html.ActionLink("+", "Form", "RoleController", htmlAttributes: new { @class = "btn btn-success" })
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="row">
+            <table class="table table-hover table-striped table-bordered table-responsive" id="table_usuarios">
+                <thead>
+                    <tr class="table-secondary">
+                        <td style="display :none;">id</td>
+                        <td>Asignar Rol</td>
+                        <td>Nombre</td>
+                        <td>Editar</td>
+                        <td>Eliminar</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model)
+                    {
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle;"><a class="btn btn-warning glyphicon" href="@Url.Action("Asignar", "Rol", new { IdRole = role.Id, Name= role.Name})"><i class="bi bi-pencil-square" style="color: ivory"></i></a></td>
+                            <td style="display :none;">@role.Id </td>
+
+                            <td>@role.Name</td>
+                            @*IdRole es un Parametro tipo Guid*@
+                            <td style="text-align: center; vertical-align: middle;"><a class="btn btn-warning glyphicon" href="@Url.Action("Update", "Rol", new { IdRole = role.Id, Name= role.Name})"><i class="bi bi-pencil-square" style="color: ivory"></i></a></td>
+                            <td style="display :none;">@role.Id </td>                                                                                     @*La variable IdRole se llama así porque esta declarada como parametro en La Action del Contolador tal cual*@
+
+                            @*IdRole es un Parametro tipo Guid*@
+                            <td style="text-align: center; vertical-align: middle;"><a class="btn btn-danger glyphicon glyphicon-trash" href="@Url.Action("Delete", "Rol",  new { IdRole = role.Id })" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"><i class="bi bi-eraser-fill" style="color: mintcream"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>
