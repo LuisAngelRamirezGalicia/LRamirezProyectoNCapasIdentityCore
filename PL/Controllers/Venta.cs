@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Collections.Specialized;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
 
 namespace PL.Controllers
 {
     public class Venta : Controller
     {
+      
 
         [HttpPost]
         public ActionResult ProductoGetAll(ML.Producto producto)
@@ -371,6 +376,8 @@ namespace PL.Controllers
         public IActionResult Procesar()
         {
             ML.Result result = new ML.Result();
+            ML.Result salida = new ML.Result();
+            salida.Objects = new List<object>();
             //result.Objects = (List<Object>)Session["Carrito"];
             string temp = HttpContext.Session.GetString("Carrito");
             // result = (ML.Result)temp;//unboxing de la lista
@@ -378,17 +385,51 @@ namespace PL.Controllers
             //result = JsonConvert.DeserializeObject<ML.Result>(temp);
             result = JsonSerializer.Deserialize<ML.Result>(temp);
 
+            //des seralizar los objetosw 
+
+            foreach(var desSerializar in result.Objects)
+            {
+                string cadenaTemporalSerializada = desSerializar.ToString();
+                //ML.Venta venta1 = new ML.Venta();
+                ML.VentaProducto ventaProducto = new ML.VentaProducto();
+                ventaProducto = JsonSerializer.Deserialize<ML.VentaProducto>(cadenaTemporalSerializada);
+                //ventaProducto.
+                salida.Objects.Add(ventaProducto);
+
+            }
+
             ML.Venta venta = new ML.Venta();
 
             venta.Usuario = new ML.Usuario();
+
+            // se obtiene el id del usuario4
+            ClaimsPrincipal principal = new ClaimsPrincipal();
+            //  string id = principal.FindFirstValue.ToString();
+            venta.Usuario.IdUsuario = User.getUserId();
+
+           
             //venta.Usuario.UserName = "";
+            //string  userId = User.Identity.
+            //ClaimsPrincipal user;
+
+            //ClaimsPrincipal currentUser = new ClaimsPrincipal();
+
+
+            //var ID = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier);
+
+
+
+            //string userName = HttpContext.User.Identity.IsAuthenticated.
+
+            //
+
 
             venta.MetodoPago = new ML.MetodoPago();
             venta.MetodoPago.IdMetodoPago = 1;
 
-            venta.Total = GetTotal(result.Objects);
+            venta.Total = GetTotal(salida.Objects);
 
-            result = BL.Venta.Add(venta, result.Objects);//guardar el resultado de una vartiable en un metodo 
+            result = BL.Venta.Add(venta,salida.Objects);//guardar el resultado de una vartiable en un metodo 
 
             venta.IdVenta = ((ML.Venta)result.Object).IdVenta;// unboxing 
 
@@ -396,12 +437,23 @@ namespace PL.Controllers
 
         }//metodo que devuelve el detalle de los productos elegidos para comprar 
 
-       // public IActionResult ModalCompra()
-        //{
-        //    ViewBag.Message = "¿Deseas finalizar tu compra?";
-        //    return PartialView("ValidationModal");
-        //}
+        public IActionResult ModalCompra()
+        {
+            //aqui se tiene que obtener y enviar la informacion de que usuario es el que compra 
+            //User.Identity.GetHashCode();
 
+            ViewBag.Message = "¿Deseas finalizar tu compra?";
+            return PartialView("ValidationModal");
+        }
+
+        //public static string getUserId(this ClaimsPrincipal user)
+        //{
+        //    if (!user.Identity.IsAuthenticated)
+        //        return null;
+
+        //    ClaimsPrincipal currentUser = user;
+        //    return currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+        //}
         //private static byte[] ObjToByteArray(object o)
         //{
         //    if (o == null)

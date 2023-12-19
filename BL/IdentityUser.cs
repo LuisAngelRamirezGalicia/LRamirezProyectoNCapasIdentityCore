@@ -11,6 +11,8 @@ namespace BL
 
         public class IdentityUser
         {
+            
+        
             public static ML.Result GetAll()
             {
                 ML.Result result = new ML.Result();
