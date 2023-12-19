@@ -431,9 +431,11 @@ namespace PL.Controllers
 
             result = BL.Venta.Add(venta,salida.Objects);//guardar el resultado de una vartiable en un metodo 
 
-            venta.IdVenta = ((ML.Venta)result.Object).IdVenta;// unboxing 
+           // venta.IdVenta = ((ML.Venta)result.Object).IdVenta;// unboxing 
 
-            return RedirectToAction("GetById", "VentaProducto", new { IdVenta = venta.IdVenta });
+          //  return RedirectToAction("GetById", "VentaProducto", new { IdVenta = venta.IdVenta });
+
+            return RedirectToAction("Index", "Home");
 
         }//metodo que devuelve el detalle de los productos elegidos para comprar 
 
