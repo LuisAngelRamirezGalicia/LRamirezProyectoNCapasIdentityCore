@@ -10,7 +10,7 @@ namespace PL.Controllers
 
     namespace PLIdentity.Controllers
     {
-        [Authorize(Roles = "Administrador, Usuario")]
+        [Authorize(Roles = "Administrador")]
         public class RolController : Controller
         {
             private RoleManager<IdentityRole> roleManager;

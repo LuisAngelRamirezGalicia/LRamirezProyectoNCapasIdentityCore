@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ML
 {
+    [Serializable]
     public class Result
     {
 

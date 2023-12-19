@@ -6,6 +6,60 @@
     <hr />
     <a class="btn btn-success" href="@Url.Action("Form", "Producto")"> Agregar producto </a>
 </div>
+
+
+@using (Html.BeginForm("GetAll", "Producto", FormMethod.Get, new { enctype = "multipart/form-data" }))
+{
+
+<div class="col-md-4">
+    @Html.LabelFor(model => model.Nombre)
+    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
+</div>
+
+
+    <div class="form-group col-md-3">
+        @Html.Label("Area")
+        @if (Model.Departamento.Area.Areas == null)
+        {
+            @Html.DropDownListFor(model => model.Departamento.Area.IdArea, new SelectList(string.Empty, "Value", "Text"), "Selecciona un Area", htmlAttributes: new { @id = "ddlArea", @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Departamento.Area.IdArea, null, new { @class = "text-danger" })
+        }
+        else
+        {
+            @Html.DropDownListFor(model => model.Departamento.Area.IdArea, new SelectList(Model.Departamento.Area.Areas, "IdArea", "Nombre"), "Selecciona un Area", htmlAttributes: new { @id = "ddlArea", @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Departamento.Area.IdArea, null, new { @class = "text-danger" })
+        }
+    </div>
+
+
+    @*Drop Down List Estados*@
+    <div class="form-group col-md-3">
+        @Html.LabelFor(model => model.Departamento.IdDepartamento , new { @class = "control-label" })
+        @if (Model.Departamento.Departamentos == null)
+        {
+            @*model.Categoria.IdCategoria*@
+            @Html.DropDownListFor(model => model.Departamento.IdDepartamento, new SelectList(string.Empty, "Value", "Text"), "Selecciona un Departamento", htmlAttributes: new { @id = "ddlDepartamento", @class = "form-control" })
+
+        }
+        else
+        {
+            @Html.DropDownListFor(model => model.Departamento.IdDepartamento, new SelectList(Model.Departamento.Departamentos, "IdDepartamento", "Nombre"), "Selecciona un Departamento", htmlAttributes: new { @id = "ddlDepartamento", @class = "form-control" })
+        }
+    </div>
+
+
+
+
+
+
+    <button class="btn btn-success bi bi-floppy" type="submit">
+        Guardar
+    </button>
+
+}
+
+<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
 @if (Model.Productos != null && Model.Productos.Count > 0)
 {
     <div class="table-responsive">
@@ -62,3 +116,76 @@
     </div>
 
 }
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+
+@section scripts{
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script type="text/javascript">
+
+        function PreviewImagen(event) {
+            var output = document.getElementById('imgUsuario');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function () {
+                URL.revokeObjectURL(output.src)
+            }
+        }
+        
+    // $('#modalValidacion').modal('show');
+
+    $(document).ready(function () {
+        $("#ddlArea").change(function () {
+            $("#ddlDepartamento").empty();
+            $.ajax({
+                url: '@Url.Action("GetDepartamento","Producto")',
+                type: 'POST',
+                dataType: 'json',
+                data: { IdArea: $("#ddlArea").val() },
+                success: function (Departamentos) {
+                    $("#ddlDepartamento").append('<option value="0">' + 'Seleccione una opción' + '</option>');
+                    $.each(Departamentos, function (i, Departamentos) {
+                        $("#ddlDepartamento").append('<option value="'
+                            + Departamentos.IdDepartamento + '">'
+                            + Departamentos.Nombre + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });
+        });
+    });
+
+    
+                    </script>
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

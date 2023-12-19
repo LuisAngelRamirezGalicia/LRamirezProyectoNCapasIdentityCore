@@ -31,9 +31,15 @@ public partial class LramirezProyectoNcapasIdentityCoreContext : DbContext
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
+    public virtual DbSet<MetodoPago> MetodoPagos { get; set; }
+
     public virtual DbSet<Producto> Productos { get; set; }
 
     public virtual DbSet<Proveedor> Proveedors { get; set; }
+
+    public virtual DbSet<VentaProducto> VentaProductos { get; set; }
+
+    public virtual DbSet<Ventum> Venta { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -139,6 +145,17 @@ public partial class LramirezProyectoNcapasIdentityCoreContext : DbContext
                 .HasConstraintName("FK__Departame__IdAre__276EDEB3");
         });
 
+        modelBuilder.Entity<MetodoPago>(entity =>
+        {
+            entity.HasKey(e => e.IdMetodoPago).HasName("PK__MetodoPa__6F49A9BE7EED70E8");
+
+            entity.ToTable("MetodoPago");
+
+            entity.Property(e => e.Metodo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Producto>(entity =>
         {
             entity.HasKey(e => e.IdProducto).HasName("PK__Producto__09889210248F60A2");
@@ -171,6 +188,36 @@ public partial class LramirezProyectoNcapasIdentityCoreContext : DbContext
             entity.Property(e => e.Telefono)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VentaProducto>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("VentaProducto");
+
+            entity.Property(e => e.IdVentaProducto).ValueGeneratedOnAdd();
+
+            entity.HasOne(d => d.IdProductoNavigation).WithMany()
+                .HasForeignKey(d => d.IdProducto)
+                .HasConstraintName("FK__VentaProd__IdPro__3F466844");
+        });
+
+        modelBuilder.Entity<Ventum>(entity =>
+        {
+            entity.HasKey(e => e.IdVenta).HasName("PK__Venta__BC1240BDA792D128");
+
+            entity.Property(e => e.Fecha).HasColumnType("date");
+            entity.Property(e => e.IdCliente).HasMaxLength(450);
+            entity.Property(e => e.Total).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Venta)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK__Venta__IdCliente__3C69FB99");
+
+            entity.HasOne(d => d.IdMetodoPagoNavigation).WithMany(p => p.Venta)
+                .HasForeignKey(d => d.IdMetodoPago)
+                .HasConstraintName("FK__Venta__IdMetodoP__3D5E1FD2");
         });
 
         OnModelCreatingPartial(modelBuilder);

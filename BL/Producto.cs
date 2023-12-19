@@ -1,4 +1,8 @@
-﻿namespace BL
+﻿using System.ComponentModel;
+using System.Runtime.Remoting;
+
+//using System.Data.Linq.SqlClient;
+namespace BL
 {
     public class Producto
     {
@@ -170,6 +174,131 @@
 
             return result;
         }
+
+        public static ML.Result GetAllBusqueda(string nombre)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
+                    {
+                    var query = (from producto in context.Productos
+
+                                 where producto.Nombre.Contains(nombre)
+
+                                     select new
+                                     {
+                                         IdProducto = producto.IdProducto,
+                                         Nombre = producto.Nombre,
+                                         PrecioUnitario = producto.PrecioUnitario,
+                                         Stock = producto.Stock,
+                                         IdProovedor = producto.IdProveedor,
+                                         IdDepartamento = producto.IdDepartamento,
+                                         Descripcion = producto.Descripcion,
+                                         Foto = producto.Foto
+                                     }).ToList();
+
+                    //var query = ML.Producto.Nombre.Where(s => s.Nombre.Contains(nombre)).ToList();
+
+                    if (query.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var productoQuery in query)
+                        {
+                            ML.Producto producto = new ML.Producto();
+                            producto.IdProducto = productoQuery.IdProducto;
+                            producto.Nombre = productoQuery.Nombre;
+                            producto.PrecioUnitario = productoQuery.PrecioUnitario.Value;
+                            producto.Stock = productoQuery.Stock;
+                            producto.Descripcion = productoQuery.Descripcion;
+                            producto.Departamento = new ML.Departamento();
+                            producto.Departamento.IdDepartamento = productoQuery.IdDepartamento.Value;
+                            producto.Proveedor = new ML.Proveedor();
+                            producto.Proveedor.IdProveedor = productoQuery.IdProovedor.Value;
+
+                            producto.Foto = productoQuery.Foto;
+
+
+                            result.Objects.Add(producto);
+
+                        }
+                        result.Correct = true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.Correct = false;
+                result.ErrorMessage = e.InnerException.Message;
+                result.Ex = e;
+            }
+
+            return result;
+        }
+
+        public static ML.Result ProductoGetByIdDepartamento(int IdDepartamento)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
+                {
+                    var query = (from producto in context.Productos
+
+                                 where producto.IdDepartamento == IdDepartamento
+
+                                 select new
+                                 {
+                                     IdProducto = producto.IdProducto,
+                                     Nombre = producto.Nombre,
+                                     PrecioUnitario = producto.PrecioUnitario,
+                                     Stock = producto.Stock,
+                                     IdProovedor = producto.IdProveedor,
+                                     IdDepartamento = producto.IdDepartamento,
+                                     Descripcion = producto.Descripcion,
+                                     Foto = producto.Foto
+                                 }).ToList();
+
+                    //var query = ML.Producto.Nombre.Where(s => s.Nombre.Contains(nombre)).ToList();
+
+                    if (query.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var productoQuery in query)
+                        {
+                            ML.Producto producto = new ML.Producto();
+                            producto.IdProducto = productoQuery.IdProducto;
+                            producto.Nombre = productoQuery.Nombre;
+                            producto.PrecioUnitario = productoQuery.PrecioUnitario.Value;
+                            producto.Stock = productoQuery.Stock;
+                            producto.Descripcion = productoQuery.Descripcion;
+                            producto.Departamento = new ML.Departamento();
+                            producto.Departamento.IdDepartamento = productoQuery.IdDepartamento.Value;
+                            producto.Proveedor = new ML.Proveedor();
+                            producto.Proveedor.IdProveedor = productoQuery.IdProovedor.Value;
+
+                            producto.Foto = productoQuery.Foto;
+
+
+                            result.Objects.Add(producto);
+
+                        }
+                        result.Correct = true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.Correct = false;
+                result.ErrorMessage = e.InnerException.Message;
+                result.Ex = e;
+            }
+
+            return result;
+        }
+
+
+
 
         public static ML.Result Delete(int IdProducto)
         {
