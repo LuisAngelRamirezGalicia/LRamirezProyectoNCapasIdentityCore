@@ -1,4 +1,5 @@
-﻿using ML;
+﻿using DL;
+using ML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,60 @@ namespace BL
 {
     public class Venta
     {
+        public static ML.Result GetByUsuario(string nombre)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
+                {
+                    var query = (from venta in context.Venta
+
+                                 where venta.IdCliente.Contains(nombre)
+
+                                 select new
+                                 {
+                                     Idventa = venta.IdVenta,
+                                     IdCliente = venta.IdCliente,
+                                     Total = venta.Total,
+                                     IdMetodoPago = venta.IdMetodoPago,
+                                     Fecha = venta.Fecha
+
+                                 }).ToList();
+
+                    //var query = ML.Producto.Nombre.Where(s => s.Nombre.Contains(nombre)).ToList();
+
+                    if (query.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var productoQuery in query)
+                        {
+                            ML.Venta venta = new ML.Venta();
+
+                            venta.IdVenta = productoQuery.Idventa;
+                            venta.Usuario = new ML.Usuario();
+                            venta.Usuario.IdUsuario = productoQuery.IdCliente;
+                            venta.Total = productoQuery.Total;
+                            venta.MetodoPago = new ML.MetodoPago();
+                            venta.MetodoPago.IdMetodoPago = productoQuery.IdMetodoPago.Value;
+
+                            result.Objects.Add(venta);
+
+                        }
+                        result.Correct = true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.Correct = false;
+                result.ErrorMessage = e.InnerException.Message;
+                result.Ex = e;
+            }
+
+            return result;
+        }
+
 
         public static ML.Result Add(ML.Venta venta, List<object> Objects)// LINQ 
         {
