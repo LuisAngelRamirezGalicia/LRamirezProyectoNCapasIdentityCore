@@ -18,6 +18,14 @@ namespace BL
                 using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
                 {
                     var query = (from venta in context.Venta
+                                     //inner join AspNetUsers on venta.IdCliente = AspNetUsers.Id
+                                     //inner join MetodoPago on  Venta.IdMetodoPago = MetodoPago.IdMetodoPago
+                                     // join rolLINQ in context.Rol on usuarioLINQ.IdRol equals rolLINQ.IdRol
+                                     //join cat in cats on person equals cat.Owner
+                                     // join aspNetUser  in on
+                                     // 
+                                     join usuario in context.AspNetUsers on venta.IdCliente equals usuario.Id
+                                     join metodoPago in context.MetodoPagos on venta.IdMetodoPago equals metodoPago.IdMetodoPago
 
                                  where venta.IdCliente.Contains(nombre)
 
@@ -27,7 +35,9 @@ namespace BL
                                      IdCliente = venta.IdCliente,
                                      Total = venta.Total,
                                      IdMetodoPago = venta.IdMetodoPago,
-                                     Fecha = venta.Fecha
+                                     Fecha = venta.Fecha,
+                                     Nombre = usuario.UserName,
+                                     pago = metodoPago.Metodo
 
                                  }).ToList();
 
@@ -46,6 +56,8 @@ namespace BL
                             venta.Total = productoQuery.Total;
                             venta.MetodoPago = new ML.MetodoPago();
                             venta.MetodoPago.IdMetodoPago = productoQuery.IdMetodoPago.Value;
+                            venta.Usuario.Correo = productoQuery.Nombre;
+                            venta.MetodoPago.Nombre = productoQuery.pago;
 
                             result.Objects.Add(venta);
 
