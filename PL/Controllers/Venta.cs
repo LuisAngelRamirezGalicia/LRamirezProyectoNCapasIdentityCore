@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.IdentityModel.Abstractions;
 using System.Collections.Specialized;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
@@ -393,6 +393,8 @@ namespace PL.Controllers
                 //ML.Venta venta1 = new ML.Venta();
                 ML.VentaProducto ventaProducto = new ML.VentaProducto();
                 ventaProducto = JsonSerializer.Deserialize<ML.VentaProducto>(cadenaTemporalSerializada);
+             ML.Result stock = new ML.Result();
+                stock = BL.Producto.RestarStock(ventaProducto.Cantidad, ventaProducto.Producto.IdProducto);
                 //ventaProducto.
                 salida.Objects.Add(ventaProducto);
 
@@ -407,7 +409,7 @@ namespace PL.Controllers
             //  string id = principal.FindFirstValue.ToString();
             venta.Usuario.IdUsuario = User.getUserId();
 
-           
+
             //venta.Usuario.UserName = "";
             //string  userId = User.Identity.
             //ClaimsPrincipal user;
@@ -423,6 +425,9 @@ namespace PL.Controllers
 
             //
 
+           // ventaProducto.Venta = new ML.Venta();
+           // ventaProducto.Venta.Fecha = DateTime.Now;
+           venta.Fecha = DateTime.Now;
 
             venta.MetodoPago = new ML.MetodoPago();
             venta.MetodoPago.IdMetodoPago = 1;

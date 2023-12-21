@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using DL;
+using ML;
+using System.ComponentModel;
 using System.Runtime.Remoting;
 
 //using System.Data.Linq.SqlClient;
@@ -6,6 +8,68 @@ namespace BL
 {
     public class Producto
     {
+        public static ML.Result RestarStock(int cantidad, int Idproducto)
+        {
+            ML.Result result = new ML.Result();
+
+     result = BL.Producto.GetById(Idproducto);
+            ML.Producto producto = new ML.Producto();
+            producto = (ML.Producto)result.Object;
+            try
+            {   //manda la cadena de conexion 
+                using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
+
+                {   /*
+                     var materiaLINQ = (from queryLINQ in context.Materias //FROM Materia
+                                       where queryLINQ.IdMateria == materia.IdMateria //WHERE IdMateria = 5
+                                       select queryLINQ).SingleOrDefault();//SELECT IdMateria,Nombre,Costo,Creditos,IdSemestre
+
+ 
+                     */
+
+                    var productoLINQ = (from queryLINQ in context.Productos
+
+
+
+                                        where queryLINQ.IdProducto == Idproducto
+
+                                        select queryLINQ).SingleOrDefault();
+
+                    if (productoLINQ != null)
+                    {
+                        //DL_EF.Usuario  = new DL_EF.Usuario();
+                        //usuarioLINQ.IdUsuario = usuario.IdUsuario;
+
+                        productoLINQ.Stock =  producto.Stock - cantidad;
+                        
+                        //context.Usuario.Update(usuarioLINQ);
+                        int RowsAffected = context.SaveChanges();
+
+
+                        //int query = context.UsuarioAdd(usuario.UserName, usuario.ApellidoPaterno, usuario.ApellidoMaterno, usuario.Email, usuario.Password, usuario.Sexo, usuario.Telefono, usuario.Celular, usuario.FechaNacimiento, usuario.CURP, usuario.Rol.IdRol, usuario.Nombre);
+
+                        //cmd.Parameters.AddWithValue("@ID", usuario.ID);
+                        // manda el procedure  y la conexion 
+                        if (RowsAffected > 0)
+                        {
+                            result.Correct = true;
+                            result.ErrorMessage = "Materia insertada correctamente";
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+
 
 
         public static ML.Result Add(ML.Producto producto)
@@ -79,7 +143,11 @@ namespace BL
                      */
 
                     var productoLINQ = (from queryLINQ in context.Productos
-                                       where queryLINQ.IdProducto == producto.IdProducto
+
+
+                                       
+                                        where queryLINQ.IdProducto == producto.IdProducto
+
                                        select queryLINQ).SingleOrDefault();
 
                     if (productoLINQ != null)
@@ -91,6 +159,7 @@ namespace BL
                         productoLINQ.Stock = producto.Stock;
                         productoLINQ.IdProveedor = producto.Proveedor.IdProveedor;
                         productoLINQ.IdDepartamento = producto.Departamento.IdDepartamento;
+
                         productoLINQ.Descripcion = producto.Descripcion;
                         productoLINQ.Foto = producto.Foto;
                         //context.Usuario.Update(usuarioLINQ);
@@ -127,6 +196,8 @@ namespace BL
                 using (DL.LramirezProyectoNcapasIdentityCoreContext context = new DL.LramirezProyectoNcapasIdentityCoreContext())
                 {
                     var query = (from producto in context.Productos
+                                 join Proveedor in context.Proveedors on producto.IdProveedor equals Proveedor.IdProveedor
+                                 join departamento in context.Departamentos on producto.IdDepartamento equals departamento.IdDepartamento
                                  select new
                                  {
                                      IdProducto = producto.IdProducto,
@@ -136,7 +207,9 @@ namespace BL
                                      IdProovedor = producto.IdProveedor,
                                      IdDepartamento = producto.IdDepartamento,
                                      Descripcion = producto.Descripcion,
-                                     Foto = producto.Foto
+                                     Foto = producto.Foto,
+                                     Telefono = Proveedor.Telefono,
+                                     NombreDepartamento = departamento.Nombre
                                  }).ToList();
 
                     if (query.Count > 0)
@@ -152,8 +225,10 @@ namespace BL
                             producto.Descripcion = productoQuery.Descripcion;
                             producto.Departamento = new ML.Departamento();
                             producto.Departamento.IdDepartamento = productoQuery.IdDepartamento.Value;
+                            producto.Departamento.Nombre = productoQuery.NombreDepartamento;
                             producto.Proveedor = new ML.Proveedor();
                             producto.Proveedor.IdProveedor = productoQuery.IdProovedor.Value;
+                            producto.Proveedor.Telefono = productoQuery.Telefono;
 
                             producto.Foto = productoQuery.Foto;
 
@@ -370,7 +445,8 @@ namespace BL
                                      Stock = ProductoLINQ.Stock,
                                      IdProovedor = ProductoLINQ.IdProveedor,
                                      IdDepartamento = ProductoLINQ.IdDepartamento,
-                                     Descripcion = ProductoLINQ.Descripcion
+                                     Descripcion = ProductoLINQ.Descripcion,
+                                     Foto = ProductoLINQ.Foto
 
 
                                  }).SingleOrDefault();
@@ -393,7 +469,7 @@ namespace BL
                         producto.Departamento.IdDepartamento = productoQuery.IdDepartamento.Value;
                         producto.Proveedor = new ML.Proveedor();
                         producto.Proveedor.IdProveedor = productoQuery.IdProovedor.Value;
-
+                        producto.Foto = productoQuery.Foto;
                         result.Object = producto;
 
 

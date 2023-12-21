@@ -95,7 +95,9 @@ namespace PL.Controllers
                 {
                     ML.Producto producto = new ML.Producto();
                     producto.Productos = result.Objects;
-
+                    producto.Departamento = new ML.Departamento();
+                    producto.Departamento.Area = new ML.Area();
+                    producto.Departamento.Area.Areas = areas.Objects;
                     return View(producto);
                 }
                 else

@@ -10,6 +10,10 @@ namespace BL
 {
     public class Venta
     {
+      
+
+
+
         public static ML.Result GetByUsuario(string nombre)
         {
             ML.Result result = new ML.Result();
@@ -58,7 +62,7 @@ namespace BL
                             venta.MetodoPago.IdMetodoPago = productoQuery.IdMetodoPago.Value;
                             venta.Usuario.Correo = productoQuery.Nombre;
                             venta.MetodoPago.Nombre = productoQuery.pago;
-
+                            venta.Fecha = productoQuery.Fecha;
                             result.Objects.Add(venta);
 
                         }
@@ -91,6 +95,7 @@ namespace BL
                     ventadl.IdCliente = venta.Usuario.IdUsuario;
                     ventadl.Total = venta.Total;
                     ventadl.IdMetodoPago = venta.MetodoPago.IdMetodoPago;
+                    ventadl.Fecha = venta.Fecha;
 
                     //context.Add(ventadl);
                     context.Venta.Add(ventadl);

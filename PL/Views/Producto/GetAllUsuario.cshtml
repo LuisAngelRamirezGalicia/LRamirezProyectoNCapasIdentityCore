@@ -15,12 +15,15 @@
 </div>
 @if (Model.Productos != null && Model.Productos.Count > 0)
 {
-    
+    <div class="row">
+       
+
+
                 @foreach (ML.Producto producto in Model.Productos)
                 {
 
-                    
-            <div class="card" style="width: 18rem;">
+ <div class="col-md-3">
+        <div class="card" style="width: 18rem;">
 
                 <div class="card-body">
                     <tr class="align-middle">
@@ -48,11 +51,11 @@
 
 
                     </tr>
-
+                    </div>
         </div>
                     </div>
 
                 }
-        
+    </div>
 
 }
